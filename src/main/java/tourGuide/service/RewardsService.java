@@ -1,6 +1,7 @@
 package tourGuide.service;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,13 @@ public class RewardsService {
 	}
 	
 	public void calculateRewards(User user) {
-		List<VisitedLocation> userLocations = user.getVisitedLocations();
 		List<Attraction> attractions = gpsUtil.getAttractions();
+		
+		List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
+		
+		for(VisitedLocation location : user.getVisitedLocations()) {
+			userLocations.add(location);
+		}
 		
 		for(VisitedLocation visitedLocation : userLocations) {
 			for(Attraction attraction : attractions) {
