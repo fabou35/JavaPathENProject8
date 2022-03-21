@@ -1,8 +1,12 @@
 package tourGuide.service;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +24,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import net.bytebuddy.NamingStrategy.SuffixingRandom.BaseNameResolver.ForGivenType;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -80,6 +85,7 @@ public class TourGuideService {
 		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		user.setTripDeals(providers);
+		System.out.println(providers.size());
 		return providers;
 	}
 	
@@ -91,13 +97,23 @@ public class TourGuideService {
 	}
 
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
+		
 		List<Attraction> nearbyAttractions = new ArrayList<>();
+		List<Double> attractionsDistance = new ArrayList<>();
+		// retrieves a distance list between the user and all attractions
+		for(Attraction attraction : gpsUtil.getAttractions()) {
+			attractionsDistance.add(rewardsService.getDistance(attraction, visitedLocation.location));
+		}
+		// orders the list and retrieves the fifth value of the distances
+		Collections.sort(attractionsDistance);
+		Double distance = attractionsDistance.get(4);
+		rewardsService.setAttractionProximityRange(distance);
+		// retrieves the five attractions 
 		for(Attraction attraction : gpsUtil.getAttractions()) {
 			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
 				nearbyAttractions.add(attraction);
 			}
 		}
-		
 		return nearbyAttractions;
 	}
 	

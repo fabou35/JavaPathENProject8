@@ -20,7 +20,7 @@ public class RewardsService {
 	// proximity in miles
     private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
-	private int attractionProximityRange = 200;
+	private Double attractionProximityRange = 200D;
 	private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
 	
@@ -35,6 +35,10 @@ public class RewardsService {
 	
 	public void setDefaultProximityBuffer() {
 		proximityBuffer = defaultProximityBuffer;
+	}
+	
+	public void setAttractionProximityRange(Double attractionProximityRange) {
+		this.attractionProximityRange = attractionProximityRange;
 	}
 	
 	public void calculateRewards(User user) {
@@ -78,7 +82,8 @@ public class RewardsService {
         double angle = Math.acos(Math.sin(lat1) * Math.sin(lat2)
                                + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));
 
-        double nauticalMiles = 60 * Math.toDegrees(angle);
+        double nauticalMiles = 3963 * angle;
+        //double nauticalMiles = 60 * Math.toDegrees(angle);
         double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
         return statuteMiles;
 	}
