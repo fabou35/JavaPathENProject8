@@ -18,6 +18,7 @@ import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 import tripPricer.Provider;
+import tripPricer.TripPricer;
 
 public class TestTourGuideService {
 
@@ -109,7 +110,6 @@ public class TestTourGuideService {
 		assertEquals(5, attractions.size());
 	}
 	
-	@Ignore
 	@Test
 	public void getTripDeals() {
 		GpsUtil gpsUtil = new GpsUtil();
@@ -118,12 +118,12 @@ public class TestTourGuideService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-
-		List<Provider> providers = tourGuideService.getTripDeals(user);
 		
+		List<Provider> providers = tourGuideService.getTripDeals(user);
+		providers.forEach(p -> System.out.println(p.name));
 		tourGuideService.tracker.stopTracking();
 		
-		assertEquals(10, providers.size());
+		assertEquals(5, providers.size());
 	}
 	
 	
