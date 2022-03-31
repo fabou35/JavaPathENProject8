@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import gpsUtil.GpsUtil;
 import rewardCentral.RewardCentral;
+import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.service.RewardsService;
 
 @Configuration
@@ -23,6 +24,11 @@ public class TourGuideModule {
 	@Bean
 	public RewardCentral getRewardCentral() {
 		return new RewardCentral();
+	}
+	
+	@Bean
+	public TestModeConfiguration getTestModeConfiguration() {
+		return new TestModeConfiguration();
 	}
 	
 }

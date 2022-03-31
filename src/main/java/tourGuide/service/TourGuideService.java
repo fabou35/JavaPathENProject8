@@ -25,6 +25,7 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import net.bytebuddy.NamingStrategy.SuffixingRandom.BaseNameResolver.ForGivenType;
+import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -38,13 +39,15 @@ public class TourGuideService {
 	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService;
 	private final TripPricer tripPricer = new TripPricer();
-	public final Tracker tracker;
+	//public final Tracker tracker;
 	boolean testMode = true;
+	private TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 	
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
 		
+		/*
 		if(testMode) {
 			logger.info("TestMode enabled");
 			logger.debug("Initializing users");
@@ -53,6 +56,7 @@ public class TourGuideService {
 		}
 		tracker = new Tracker(this);
 		addShutDownHook();
+		*/
 	}
 	
 	public List<UserReward> getUserRewards(User user) {
@@ -66,6 +70,7 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 	
+	/*
 	public User getUser(String userName) {
 		return internalUserMap.get(userName);
 	}
@@ -78,14 +83,13 @@ public class TourGuideService {
 		if(!internalUserMap.containsKey(user.getUserName())) {
 			internalUserMap.put(user.getUserName(), user);
 		}
-	}
+	}*/
 	
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
 		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		user.setTripDeals(providers);
-		System.out.println(providers.size());
 		return providers;
 	}
 	
@@ -116,7 +120,7 @@ public class TourGuideService {
 		}
 		return nearbyAttractions;
 	}
-	
+	/*
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() { 
 		      public void run() {
@@ -124,7 +128,7 @@ public class TourGuideService {
 		      } 
 		    }); 
 	}
-	
+	*/
 	/**********************************************************************************
 	 * 
 	 * Methods Below: For Internal Testing
@@ -132,7 +136,7 @@ public class TourGuideService {
 	 **********************************************************************************/
 	private static final String tripPricerApiKey = "test-server-api-key";
 	// Database connection will be used for external users, but for testing purposes internal users are provided and stored in memory
-	private final Map<String, User> internalUserMap = new HashMap<>();
+	/*private final Map<String, User> internalUserMap = new HashMap<>();
 	private void initializeInternalUsers() {
 		IntStream.range(0, InternalTestHelper.getInternalUserNumber()).forEach(i -> {
 			String userName = "internalUser" + i;
@@ -167,6 +171,6 @@ public class TourGuideService {
 	private Date getRandomTime() {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
-	}
+	}*/
 	
 }

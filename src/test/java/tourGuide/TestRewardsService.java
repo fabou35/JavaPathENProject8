@@ -6,23 +6,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
+import tourGuide.service.UserService;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
 
+@SpringBootTest
 public class TestRewardsService {
 	
 	@Test
 	public void userGetRewards() {
+		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
@@ -34,7 +38,7 @@ public class TestRewardsService {
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
 		tourGuideService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
-		tourGuideService.tracker.stopTracking();
+		testModeConfiguration.tracker.stopTracking();
 		assertTrue(userRewards.size() == 1);
 	}
 	
@@ -54,11 +58,13 @@ public class TestRewardsService {
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 
 		InternalTestHelper.setInternalUserNumber(1);
+		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
+		UserService userService = new UserService(testModeConfiguration);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
-		rewardsService.calculateRewards(tourGuideService.getAllUsers().get(0));
-		List<UserReward> userRewards = tourGuideService.getUserRewards(tourGuideService.getAllUsers().get(0));
-		tourGuideService.tracker.stopTracking();
+		rewardsService.calculateRewards(userService.getAllUsers().get(0));
+		List<UserReward> userRewards = tourGuideService.getUserRewards(userService.getAllUsers().get(0));
+		testModeConfiguration.tracker.stopTracking();
 
 		assertEquals(gpsUtil.getAttractions().size(), userRewards.size());
 	}
