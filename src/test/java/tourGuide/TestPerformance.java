@@ -18,6 +18,7 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.service.GpsService;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.UserService;
@@ -53,7 +54,7 @@ public class TestPerformance {
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		UserService userService = new UserService(testModeConfiguration);
 
@@ -63,7 +64,7 @@ public class TestPerformance {
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		for(User user : allUsers) {
-			tourGuideService.trackUserLocation(user);
+			gpsService.trackUserLocation(user);
 		}
 		stopWatch.stop();
 		testModeConfiguration.tracker.stopTracking();
