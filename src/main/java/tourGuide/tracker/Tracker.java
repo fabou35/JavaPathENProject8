@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tourGuide.Configuration.TestModeConfiguration;
+import tourGuide.service.GpsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.UserService;
 import tourGuide.user.User;
@@ -19,7 +20,8 @@ public class Tracker extends Thread {
 	private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(5);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	//private final TourGuideService tourGuideService;
-	private TourGuideService tourGuideService;
+	//private TourGuideService tourGuideService;
+	private GpsService gpsService;
 	private UserService userService;
 	private final TestModeConfiguration testModeConfiguration;
 	private boolean stop = false;
@@ -57,7 +59,7 @@ public class Tracker extends Thread {
 			List<User> users = userService.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
-			users.forEach(u -> tourGuideService.trackUserLocation(u));
+			users.forEach(u -> gpsService.trackUserLocation(u));
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 			stopWatch.reset();
