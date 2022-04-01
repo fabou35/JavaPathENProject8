@@ -3,6 +3,7 @@ package tourGuide.service;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
@@ -24,6 +25,8 @@ public class RewardsService {
 	private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
 	
+	
+	
 	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsCentral = rewardCentral;
@@ -36,9 +39,13 @@ public class RewardsService {
 	public void setDefaultProximityBuffer() {
 		proximityBuffer = defaultProximityBuffer;
 	}
-	
+	/*
 	public void setAttractionProximityRange(Double attractionProximityRange) {
 		this.attractionProximityRange = attractionProximityRange;
+	}
+	*/
+	public List<UserReward> getUserRewards(User user) {
+		return user.getUserRewards();
 	}
 	
 	public void calculateRewards(User user) {
@@ -60,19 +67,20 @@ public class RewardsService {
 			}
 		}
 	}
-	
+	/*
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
-		return getDistance(attraction, location) > attractionProximityRange ? false : true;
+		return gpsService.getDistance(attraction, location) > attractionProximityRange ? false : true;
 	}
-	
+	*/
 	private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
-		return getDistance(attraction, visitedLocation.location) > proximityBuffer ? false : true;
+		GpsService gpsService = new GpsService(gpsUtil, this);
+		return gpsService.getDistance(attraction, visitedLocation.location) > proximityBuffer ? false : true;
 	}
 	
 	private int getRewardPoints(Attraction attraction, User user) {
 		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
 	}
-	
+	/*
 	public double getDistance(Location loc1, Location loc2) {
         double lat1 = Math.toRadians(loc1.latitude);
         double lon1 = Math.toRadians(loc1.longitude);
@@ -86,6 +94,6 @@ public class RewardsService {
         //double nauticalMiles = 60 * Math.toDegrees(angle);
         double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
         return statuteMiles;
-	}
+	}*/
 
 }

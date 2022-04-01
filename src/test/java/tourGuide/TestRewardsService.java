@@ -47,8 +47,9 @@ public class TestRewardsService {
 	public void isWithinAttractionProximity() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
 		Attraction attraction = gpsUtil.getAttractions().get(0);
-		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
+		assertTrue(gpsService.isWithinAttractionProximity(attraction, attraction));
 	}
 	
 	
@@ -64,7 +65,7 @@ public class TestRewardsService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
 		rewardsService.calculateRewards(userService.getAllUsers().get(0));
-		List<UserReward> userRewards = tourGuideService.getUserRewards(userService.getAllUsers().get(0));
+		List<UserReward> userRewards = rewardsService.getUserRewards(userService.getAllUsers().get(0));
 		testModeConfiguration.tracker.stopTracking();
 
 		assertEquals(gpsUtil.getAttractions().size(), userRewards.size());
