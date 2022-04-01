@@ -17,7 +17,6 @@ import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.GpsService;
 import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
 import tourGuide.service.UserService;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
@@ -62,7 +61,6 @@ public class TestRewardsService {
 		InternalTestHelper.setInternalUserNumber(1);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		UserService userService = new UserService(testModeConfiguration);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
 		rewardsService.calculateRewards(userService.getAllUsers().get(0));
 		List<UserReward> userRewards = rewardsService.getUserRewards(userService.getAllUsers().get(0));

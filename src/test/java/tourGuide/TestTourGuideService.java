@@ -6,12 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
@@ -21,11 +17,9 @@ import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.GpsService;
 import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
 import tourGuide.service.UserService;
 import tourGuide.user.User;
 import tripPricer.Provider;
-import tripPricer.TripPricer;
 
 @SpringBootTest
 public class TestTourGuideService {
@@ -121,8 +115,6 @@ public class TestTourGuideService {
 	
 	@Test
 	public void getTripDeals() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		UserService userService = new UserService(testModeConfiguration);

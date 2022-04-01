@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.service.GpsService;
-import tourGuide.service.TourGuideService;
 import tourGuide.service.UserService;
 import tourGuide.user.User;
 
@@ -19,20 +18,11 @@ public class Tracker extends Thread {
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
 	private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(5);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-	//private final TourGuideService tourGuideService;
-	//private TourGuideService tourGuideService;
 	private GpsService gpsService;
 	private UserService userService;
 	private final TestModeConfiguration testModeConfiguration;
 	private boolean stop = false;
 
-	/*public Tracker(TourGuideService tourGuideService) {
-		this.tourGuideService = tourGuideService;
-		
-		executorService.submit(this);
-	}
-	*/
-	
 	public Tracker(TestModeConfiguration testModeConfiguration) {
 		this.testModeConfiguration = testModeConfiguration;
 		
