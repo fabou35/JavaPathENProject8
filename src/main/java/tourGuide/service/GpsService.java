@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
@@ -22,6 +23,9 @@ public class GpsService {
 	private Double attractionProximityRange = 200D;
 	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService;
+	
+	@Autowired
+	private UserService userService;
 	
 	public GpsService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
@@ -69,10 +73,10 @@ public class GpsService {
 	/**
 	 * retrieves a list of the five nearest attractions to a user<br/>
 	 * gives :<br/> - The user's location lat/long <br/>
-	 * 		   - Name of Tourist attraction<br/>
-	 * 		   - Tourist attractions lat/long<br/>
-	 * 		   - The distance in miles between the user's location and each of the attractions<br/>
-	 * 		   - The reward points for visiting each Attraction 
+	 * 		   		- Name of Tourist attraction<br/>
+	 * 		  		- Tourist attractions lat/long<br/>
+	 * 		   		- The distance in miles between the user's location and each of the attractions<br/>
+	 * 		   		- The reward points for visiting each Attraction 
 	 * @param userName : the user's name
 	 * @return a list of five attractions Map
 	 */
@@ -99,6 +103,29 @@ public class GpsService {
     	}
     	
     	return nearbyAttractionsList;
+	}
+	
+	/**
+	 * retrieves a list of every user's most recent location</br>
+	 * gives :</br> - the userId</br>
+	 * 				- the user's location lat/long</br>
+	 * @return a list of Map
+	 */
+	public List<Map<String, Object>> getAllCurrentLocations() {
+		List<Map<String, Object>> allCurrentLocations = new ArrayList<>();
+		List<User> users = new ArrayList<>();
+		users = userService.getAllUsers();
+		for(User user : users) {
+			Map<String, Double> location = new TreeMap<String, Double>();
+			Map<String, Object> currentLocation = new TreeMap<String, Object>();
+			location.put("longitude", user.getLastVisitedLocation().location.longitude);
+			location.put("latitude", user.getLastVisitedLocation().location.latitude);
+			currentLocation.put(user.getUserId().toString(), location);
+			allCurrentLocations.add(currentLocation);
+		}
+
+		return allCurrentLocations;
+		
 	}
 	
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
