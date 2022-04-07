@@ -3,6 +3,8 @@ package tourGuide.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import rewardCentral.RewardCentral;
 import tourGuide.user.User;
 
 @Service
@@ -42,9 +45,8 @@ public class GpsService {
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
-
+	
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		
 		List<Attraction> nearbyAttractions = new ArrayList<>();
 		List<Double> attractionsDistance = new ArrayList<>();
 		// retrieves a distance list between the user and all attractions
@@ -64,6 +66,41 @@ public class GpsService {
 		return nearbyAttractions;
 	}
 	
+	/**
+	 * retrieves a list of the five nearest attractions to a user<br/>
+	 * gives :<br/> - The user's location lat/long <br/>
+	 * 		   - Name of Tourist attraction<br/>
+	 * 		   - Tourist attractions lat/long<br/>
+	 * 		   - The distance in miles between the user's location and each of the attractions<br/>
+	 * 		   - The reward points for visiting each Attraction 
+	 * @param userName : the user's name
+	 * @return a list of five attractions Map
+	 */
+	public List<Map<String, Object>> getNearByAttractionsForDisplay(VisitedLocation visitedLocation){
+		RewardCentral rewardCentral = new RewardCentral();
+		List<Attraction> nearbyAttractions = getNearByAttractions(visitedLocation);
+    	Map<String, Object> userMap = new TreeMap<String, Object>();
+    	List<Map<String, Object>> nearbyAttractionsList = new ArrayList<>();
+    	
+    	userMap.put("userLatitude", visitedLocation.location.latitude);
+		userMap.put("userLongitude", visitedLocation.location.longitude);
+		nearbyAttractionsList.add(userMap);
+		
+    	for(Attraction attraction : nearbyAttractions) {
+    		Map<String, Object> nearbyAttractionsMap = new TreeMap<String, Object>();
+    		
+    		nearbyAttractionsMap.put("attractionName", attraction.attractionName);
+    		nearbyAttractionsMap.put("latitude", attraction.latitude);
+    		nearbyAttractionsMap.put("longitude", attraction.longitude);
+    		nearbyAttractionsMap.put("distance", getDistance(attraction, visitedLocation.location));
+    		nearbyAttractionsMap.put("reward", rewardCentral.getAttractionRewardPoints(attraction.attractionId, visitedLocation.userId));
+    		
+    		nearbyAttractionsList.add(nearbyAttractionsMap);
+    	}
+    	
+    	return nearbyAttractionsList;
+	}
+	
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
 		return getDistance(attraction, location) > attractionProximityRange ? false : true;
 	}
@@ -78,7 +115,6 @@ public class GpsService {
                                + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));
 
         double nauticalMiles = 3963 * angle;
-        //double nauticalMiles = 60 * Math.toDegrees(angle);
         double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
         return statuteMiles;
 	}

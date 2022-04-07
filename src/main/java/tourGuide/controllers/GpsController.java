@@ -38,7 +38,7 @@ public class GpsController {
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) {
     	VisitedLocation visitedLocation = gpsService.getUserLocation(userService.getUser(userName));
-    	return JsonStream.serialize(gpsService.getNearByAttractions(visitedLocation));
+    	return JsonStream.serialize(gpsService.getNearByAttractionsForDisplay(visitedLocation));
     }
     
     @RequestMapping("/getAllCurrentLocations")

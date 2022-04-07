@@ -1,12 +1,16 @@
 package tourGuide;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import gpsUtil.GpsUtil;
@@ -99,10 +103,10 @@ public class TestTourGuideService {
 	public void getNearbyAttractions() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
-		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
 		
+		InternalTestHelper.setInternalUserNumber(0);
+		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
+		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
 		
@@ -111,6 +115,27 @@ public class TestTourGuideService {
 		testModeConfiguration.tracker.stopTracking();
 		
 		assertEquals(5, attractions.size());
+	}
+	
+	@Test
+	public void getNearByAttractionsListForDisplay() {
+		GpsUtil gpsUtil = new GpsUtil();
+		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		InternalTestHelper.setInternalUserNumber(1);
+		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
+		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
+		UserService userService = new UserService(testModeConfiguration);
+		VisitedLocation visitedLocation = userService.getUser(userService.getAllUsers().get(0).getUserName()).getLastVisitedLocation();
+		
+		Map<String, Object> userLocationMap = new TreeMap<>();
+		userLocationMap.put("userLatitude", visitedLocation.location.latitude);
+		userLocationMap.put("userLongitude", visitedLocation.location.longitude);
+		
+		List<Map<String, Object>> nearByAttractionsList = gpsService.getNearByAttractionsForDisplay(visitedLocation);
+		testModeConfiguration.tracker.stopTracking();
+		
+		assertEquals(6, nearByAttractionsList.size());
+		assertThat(userLocationMap).isIn(nearByAttractionsList);
 	}
 	
 	@Test
