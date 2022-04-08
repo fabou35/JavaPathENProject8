@@ -1,4 +1,4 @@
-package tourGuide;
+package tourGuide.service;
 
 import static org.junit.Assert.*;
 
@@ -15,9 +15,6 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.helper.InternalTestHelper;
-import tourGuide.service.GpsService;
-import tourGuide.service.RewardsService;
-import tourGuide.service.UserService;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
 
@@ -41,16 +38,6 @@ public class TestRewardsService {
 		testModeConfiguration.tracker.stopTracking();
 		assertTrue(userRewards.size() == 1);
 	}
-	
-	@Test
-	public void isWithinAttractionProximity() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
-		Attraction attraction = gpsUtil.getAttractions().get(0);
-		assertTrue(gpsService.isWithinAttractionProximity(attraction, attraction));
-	}
-	
 	
 	@Test
 	public void nearAllAttractions() {

@@ -2,6 +2,7 @@ package tourGuide.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,29 @@ import tourGuide.user.User;
 @SpringBootTest
 public class TestGpsService {
 
+	@Test
+	public void isWithinAttractionProximity() {
+		GpsUtil gpsUtil = new GpsUtil();
+		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
+		Attraction attraction = gpsUtil.getAttractions().get(0);
+		assertTrue(gpsService.isWithinAttractionProximity(attraction, attraction));
+	}
+	
+	@Test
+	public void getUserLocation() {
+		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
+		GpsUtil gpsUtil = new GpsUtil();
+		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		InternalTestHelper.setInternalUserNumber(0);
+		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
+		
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
+		testModeConfiguration.tracker.stopTracking();
+		assertTrue(visitedLocation.userId.equals(user.getUserId()));
+	}
+	
 	@Test
 	public void getNearbyAttractions() {
 		GpsUtil gpsUtil = new GpsUtil();
