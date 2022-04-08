@@ -20,6 +20,22 @@ public class UserPreferences {
 	public UserPreferences() {
 	}
 	
+	
+	
+	public UserPreferences(int attractionProximity, Money lowerPricePoint, Money highPricePoint, int tripDuration,
+			int ticketQuantity, int numberOfAdults, int numberOfChildren) {
+		super();
+		this.attractionProximity = attractionProximity;
+		this.lowerPricePoint = lowerPricePoint;
+		this.highPricePoint = highPricePoint;
+		this.tripDuration = tripDuration;
+		this.ticketQuantity = ticketQuantity;
+		this.numberOfAdults = numberOfAdults;
+		this.numberOfChildren = numberOfChildren;
+	}
+
+
+
 	public void setAttractionProximity(int attractionProximity) {
 		this.attractionProximity = attractionProximity;
 	}

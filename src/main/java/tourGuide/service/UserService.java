@@ -1,12 +1,15 @@
 package tourGuide.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import tourGuide.Configuration.TestModeConfiguration;
 import tourGuide.user.User;
+import tourGuide.user.UserPreferences;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 
@@ -41,5 +44,38 @@ public class UserService {
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		user.setTripDeals(providers);
 		return providers;
+	}
+	
+	/**
+	 * retrieves user's preferences
+	 * @param user : User whose preferences are to be retrieved
+	 * @return Map of user's preferences
+	 */
+	public Map<String, Object> getUserPreferences(User user){
+		Map<String, Object> userPreferencesMap = new TreeMap<String, Object>();
+		UserPreferences userPreferences = user.getUserPreferences();
+		userPreferencesMap.put("attractionProximity", userPreferences.getAttractionProximity());
+		userPreferencesMap.put("lowerPricePoint", userPreferences.getLowerPricePoint());
+		userPreferencesMap.put("highPricePoint", userPreferences.getHighPricePoint());
+		userPreferencesMap.put("tripDuration", userPreferences.getTripDuration());
+		userPreferencesMap.put("ticketQuantity", userPreferences.getTicketQuantity());
+		userPreferencesMap.put("numberOfAdults", userPreferences.getNumberOfAdults());
+		userPreferencesMap.put("numberOfChildren", userPreferences.getNumberOfChildren());
+
+		return userPreferencesMap;
+	}
+	
+	/**
+	 * modifies user's preferences
+	 * @param userName : username of the User whose preferences are to be modified
+	 * @param userNewPreferences : modified preferences 
+	 * @return
+	 */
+	public Map<String, Object> modifyUserPreferences(String userName, UserPreferences userNewPreferences){
+		Map<String, Object> userPreferencesMap = new TreeMap<String, Object>();
+		User user = getUser(userName);
+		user.setUserPreferences(userNewPreferences);
+		userPreferencesMap = getUserPreferences(user);
+		return userPreferencesMap;
 	}
 }
