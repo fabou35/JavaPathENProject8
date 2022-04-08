@@ -1,9 +1,12 @@
 package tourGuide.Configuration;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -22,6 +25,8 @@ public class TestModeConfiguration {
 	private Logger logger = LoggerFactory.getLogger(TestModeConfiguration.class);
 	public final Tracker tracker;
 	boolean testMode = true;
+	//Locale.setDefault(Locale.ENGLAND);
+	private Locale locale = Locale.ENGLISH;
 
 	public TestModeConfiguration() {
 		
@@ -74,15 +79,21 @@ public class TestModeConfiguration {
 	}
 	
 	private double generateRandomLongitude() {
+		Locale.setDefault(locale);
+		NumberFormat newFormatter = new DecimalFormat();
 		double leftLimit = -180;
 	    double rightLimit = 180;
-	    return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+	    double test = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+	    return Double.parseDouble(newFormatter.format(test));
 	}
 	
 	private double generateRandomLatitude() {
+		Locale.setDefault(locale);
+		NumberFormat newFormatter = new DecimalFormat();
 		double leftLimit = -85.05112878;
 	    double rightLimit = 85.05112878;
-	    return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+	    double test = leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
+	    return Double.parseDouble(newFormatter.format(test));
 	}
 	
 	private Date getRandomTime() {
