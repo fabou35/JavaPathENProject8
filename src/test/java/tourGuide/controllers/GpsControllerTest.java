@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class GpsControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+	@Ignore
 	@Test
 	public void test_getLocation() throws Exception {
 		InternalTestHelper.setInternalUserNumber(1);
