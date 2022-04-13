@@ -1,4 +1,4 @@
-package tourGuide.service;
+package msgps.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -17,9 +17,11 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
-import tourGuide.Configuration.TestModeConfiguration;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.user.User;
+import msrewards.service.RewardsService;
+import msuser.configuration.TestModeConfiguration;
+import msuser.helper.InternalTestHelper;
+import msuser.model.User;
+import msuser.service.UserService;
 
 @SpringBootTest
 public class TestGpsService {

@@ -1,4 +1,4 @@
-package tourGuide.service;
+package msuser.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -12,11 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.VisitedLocation;
+import msgps.service.GpsService;
+import msrewards.service.RewardsService;
 import rewardCentral.RewardCentral;
-import tourGuide.Configuration.TestModeConfiguration;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.user.User;
-import tourGuide.user.UserPreferences;
+import msuser.configuration.TestModeConfiguration;
+import msuser.helper.InternalTestHelper;
+import msuser.model.User;
+import msuser.model.UserPreferences;
 import tripPricer.Provider;
 
 @SpringBootTest

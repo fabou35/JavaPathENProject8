@@ -40,6 +40,7 @@ dependencies {
     compile(name:'RewardCentral', ext:'jar')
     compile(name:'TripPricer', ext:'jar')
     compile(name:'GpsService', ext:'jar')
+    compile(name:'RewardsService', ext:'jar')
     compile(name:'UserService', ext:'jar')
     compile(name:'User', ext:'jar')
     

@@ -1,4 +1,4 @@
-package tourGuide.service;
+package msrewards.service;
 
 import static org.junit.Assert.*;
 
@@ -12,11 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import msgps.service.GpsService;
 import rewardCentral.RewardCentral;
-import tourGuide.Configuration.TestModeConfiguration;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.user.User;
-import tourGuide.user.UserReward;
+import msuser.configuration.TestModeConfiguration;
+import msuser.helper.InternalTestHelper;
+import msuser.model.User;
+import msuser.model.UserReward;
+import msuser.service.UserService;
 
 @SpringBootTest
 public class TestRewardsService {
