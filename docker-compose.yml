@@ -1,0 +1,29 @@
+version: '3'
+services:
+    ms-gps:
+        container_name: msgps
+        build:
+            context: ms-gps
+            dockerfile: Dockerfile
+        image: msgps:latest
+        ports:
+            - 5001:8081
+    ms-rewards:
+        container_name: msrewards
+        build:
+            context: ms-rewards
+            dockerfile: Dockerfile
+        image: mgsrewards:latest
+        ports:
+            - 5002:8082
+    ms-user:
+        container_name: msuser
+        build:
+            context: ms-user
+            dockerfile: Dockerfile
+        image: mgsuser:latest
+        ports:
+            - 5003:8083
+        
+      
+    

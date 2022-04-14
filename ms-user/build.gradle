@@ -16,7 +16,7 @@ apply plugin: "jacoco"
 
 
 bootJar {
-    baseName = 'ms-user'
+    baseName = 'msuser'
     version =  '1.0.0'
 }
 

@@ -16,7 +16,7 @@ apply plugin: "jacoco"
 
 
 bootJar {
-    baseName = 'ms-rewards'
+    baseName = 'msrewards'
     version =  '1.0.0'
 }
 
