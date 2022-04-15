@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ public class GpsService {
 	private Double attractionProximityRange = 200D;
 	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService;
+	private ExecutorService executor = Executors.newFixedThreadPool(9000);
 	
 	@Autowired
 	private UserService userService;
@@ -34,22 +38,28 @@ public class GpsService {
 		this.rewardsService = rewardsService;
 	}
 	
+	public void submitLocation(User user, UserService userService) {
+		CompletableFuture.supplyAsync(() -> {
+		    return gpsUtil.getUserLocation(user.getUserId());
+		}, executor)
+			.thenAccept(visitedLocation -> { finalizeLocation(user, visitedLocation); });
+	}
+	
 	public void setAttractionProximityRange(Double attractionProximityRange) {
 		this.attractionProximityRange = attractionProximityRange;
 	}
 	
 	public VisitedLocation getUserLocation(User user) {
-		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
-			user.getLastVisitedLocation() :
-			trackUserLocation(user);
-		return visitedLocation;
+		return gpsUtil.getUserLocation(user.getUserId());
 	}
 	
-	public VisitedLocation trackUserLocation(User user) {
-		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+	public void trackUserLocation(User user) {
+		submitLocation(user, userService);
+	}
+	
+	public void finalizeLocation(User user, VisitedLocation visitedLocation) {
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
-		return visitedLocation;
 	}
 	
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {

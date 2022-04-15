@@ -44,7 +44,7 @@ public class TestGpsService {
 		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
+		VisitedLocation visitedLocation = gpsService.getUserLocation(user);
 		testModeConfiguration.tracker.stopTracking();
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
 	}
@@ -58,7 +58,7 @@ public class TestGpsService {
 		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
+		VisitedLocation visitedLocation = gpsService.getUserLocation(user);
 		
 		List<Attraction> attractions = gpsService.getNearByAttractions(visitedLocation);
 		

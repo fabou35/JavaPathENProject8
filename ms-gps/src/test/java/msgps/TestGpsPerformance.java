@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import gpsUtil.GpsUtil;
+import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import msuser.configuration.TestModeConfiguration;
 import msuser.helper.InternalTestHelper;
@@ -22,14 +22,13 @@ import msuser.model.User;
 
 @SpringBootTest
 public class TestGpsPerformance {
-
-	@Ignore
+	
 	@Test
 	public void highVolumeTrackLocation() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(100);
+		InternalTestHelper.setInternalUserNumber(100000);
 		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		UserService userService = new UserService(testModeConfiguration);
@@ -41,6 +40,20 @@ public class TestGpsPerformance {
 		stopWatch.start();
 		for(User user : allUsers) {
 			gpsService.trackUserLocation(user);
+		}
+		
+		for(User user : allUsers) {
+			while(user.getVisitedLocations().size() < 4) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(100);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		
+		for(User user: allUsers) {
+			VisitedLocation visitedLocation = user.getVisitedLocations().get(3);
+			assertTrue(visitedLocation != null);
 		}
 		stopWatch.stop();
 		testModeConfiguration.tracker.stopTracking();
