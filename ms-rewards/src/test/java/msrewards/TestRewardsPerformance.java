@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -25,14 +24,13 @@ import msuser.model.User;
 @SpringBootTest
 public class TestRewardsPerformance {
 
-	@Ignore
 	@Test
 	public void highVolumeGetRewards() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(100);
+		InternalTestHelper.setInternalUserNumber(100000);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		UserService userService = new UserService(testModeConfiguration);
 		StopWatch stopWatch = new StopWatch();
@@ -44,6 +42,15 @@ public class TestRewardsPerformance {
 		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 	     
 	    allUsers.forEach(u -> rewardsService.calculateRewards(u));
+	    
+	    for(User user : allUsers) {
+			while(user.getUserRewards().isEmpty()) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(100);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
 	    
 		for(User user : allUsers) {
 			assertTrue(user.getUserRewards().size() > 0);

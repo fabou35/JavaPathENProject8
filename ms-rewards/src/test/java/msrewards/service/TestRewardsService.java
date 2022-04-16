@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,8 +38,14 @@ public class TestRewardsService {
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
 		gpsService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(1000);
+		} catch (InterruptedException e) {
+		}
+		
 		testModeConfiguration.tracker.stopTracking();
-		assertTrue(userRewards.size() == 1);
+		assertTrue(userRewards.size() > 0);
 	}
 	
 	@Test
@@ -53,6 +60,12 @@ public class TestRewardsService {
 		
 		rewardsService.calculateRewards(userService.getAllUsers().get(0));
 		List<UserReward> userRewards = rewardsService.getUserRewards(userService.getAllUsers().get(0));
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(1000);
+		} catch (InterruptedException e) {
+		}
+		
 		testModeConfiguration.tracker.stopTracking();
 
 		assertEquals(gpsUtil.getAttractions().size(), userRewards.size());
