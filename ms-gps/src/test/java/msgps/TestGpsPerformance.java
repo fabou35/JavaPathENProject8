@@ -15,8 +15,9 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import msuser.configuration.TestModeConfiguration;
 import msuser.helper.InternalTestHelper;
+import msgps.model.Gps;
 import msgps.service.GpsService;
-import msrewards.service.RewardsService;
+import msrewards.model.Rewards;
 import msuser.service.UserService;
 import msuser.model.User;
 
@@ -26,10 +27,11 @@ public class TestGpsPerformance {
 	@Test
 	public void highVolumeTrackLocation() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		Rewards rewards = new Rewards(gpsUtil, new RewardCentral());
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100000);
-		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
+		Gps gps = new Gps(gpsUtil, rewards);
+		GpsService gpsService = new GpsService(gps);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		UserService userService = new UserService(testModeConfiguration);
 

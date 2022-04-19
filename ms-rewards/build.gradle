@@ -41,6 +41,7 @@ dependencies {
     compile(name:'TripPricer', ext:'jar')
     compile(name:'User', ext:'jar')
     compile(name:'GpsService', ext:'jar')
+    compile(name:'Gps', ext:'jar')
     compile(name:'UserService', ext:'jar')
     compile(name:'Configuration', ext:'jar')
     compile(name:'Helper', ext:'jar')

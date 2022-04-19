@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import gpsUtil.GpsUtil;
 import rewardCentral.RewardCentral;
 import msuser.configuration.TestModeConfiguration;
+import msgps.model.Gps;
 import msgps.service.GpsService;
+import msrewards.model.Rewards;
 import msrewards.service.RewardsService;
 import msuser.service.UserService;
 
@@ -19,8 +21,13 @@ public class MsGpsModule {
 	}
 	
 	@Bean
+	public Rewards getRewards() {
+		return new Rewards(getGpsUtil(), getRewardCentral());
+	}
+	
+	@Bean
 	public RewardsService getRewardsService() {
-		return new RewardsService(getGpsUtil(), getRewardCentral());
+		return new RewardsService(getRewards());
 	}
 	
 	@Bean
@@ -29,8 +36,13 @@ public class MsGpsModule {
 	}
 	
 	@Bean
+	public Gps getGps() {
+		return new Gps(getGpsUtil(), getRewards());
+	}
+	
+	@Bean
 	public GpsService getGpsService() {
-		return new GpsService(getGpsUtil(), getRewardsService());
+		return new GpsService(getGps());
 	}
 	
 	@Bean

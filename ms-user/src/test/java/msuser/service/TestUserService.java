@@ -12,8 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.VisitedLocation;
+import msgps.model.Gps;
 import msgps.service.GpsService;
-import msrewards.service.RewardsService;
+import msrewards.model.Rewards;
 import rewardCentral.RewardCentral;
 import msuser.configuration.TestModeConfiguration;
 import msuser.helper.InternalTestHelper;
@@ -69,12 +70,13 @@ public class TestUserService {
 	public void trackUser() {
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		Rewards rewards = new Rewards(gpsUtil, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
-		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
+		Gps gps =new Gps(gpsUtil, rewards);
+		GpsService gpsService = new GpsService(gps);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
+		VisitedLocation visitedLocation = gpsService.getUserLocation(user);
 		
 		testModeConfiguration.tracker.stopTracking();
 		

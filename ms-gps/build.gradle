@@ -44,6 +44,7 @@ dependencies {
     compile(name:'Configuration', ext:'jar')
     compile(name:'Tracker', ext:'jar')
     compile(name:'RewardsService', ext:'jar')
+    compile(name:'Rewards', ext:'jar')
     compile(name:'UserService', ext:'jar')
     compile(name:'Helper', ext:'jar')
         

@@ -16,7 +16,9 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import msgps.model.Gps;
 import rewardCentral.RewardCentral;
+import msrewards.model.Rewards;
 import msrewards.service.RewardsService;
 import msuser.service.UserService;
 import msuser.model.User;
@@ -25,32 +27,28 @@ import msuser.model.User;
 public class GpsService {
 	private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 	
-	private Double attractionProximityRange = 200D;
-	private final GpsUtil gpsUtil;
-	private final RewardsService rewardsService;
+	private Rewards rewards= new Rewards(new GpsUtil(), new RewardCentral());
+	private Gps gps = new Gps(new GpsUtil(), new Rewards(new GpsUtil(), new RewardCentral()));
+	private RewardsService rewardsService = new RewardsService(rewards);
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(9000);
 	
 	@Autowired
 	private UserService userService;
 	
-	public GpsService(GpsUtil gpsUtil, RewardsService rewardsService) {
-		this.gpsUtil = gpsUtil;
-		this.rewardsService = rewardsService;
+	public GpsService(Gps gps) {
+		this.gps = gps;
 	}
 	
 	public void submitLocation(User user, UserService userService) {
 		CompletableFuture.supplyAsync(() -> {
-		    return gpsUtil.getUserLocation(user.getUserId());
+		    return gps.getGpsUtil().getUserLocation(user.getUserId());
 		}, executor)
 			.thenAccept(visitedLocation -> { finalizeLocation(user, visitedLocation); });
 	}
 	
-	public void setAttractionProximityRange(Double attractionProximityRange) {
-		this.attractionProximityRange = attractionProximityRange;
-	}
-	
 	public VisitedLocation getUserLocation(User user) {
-		return gpsUtil.getUserLocation(user.getUserId());
+		return gps.getGpsUtil().getUserLocation(user.getUserId());
 	}
 	
 	public void trackUserLocation(User user) {
@@ -65,16 +63,14 @@ public class GpsService {
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
 		List<Double> attractionsDistance = new ArrayList<>();
+		
 		// retrieves a distance list between the user and all attractions
-		for(Attraction attraction : gpsUtil.getAttractions()) {
-			attractionsDistance.add(getDistance(attraction, visitedLocation.location));
-		}
-		// orders the list and retrieves the fifth value of the distances
-		Collections.sort(attractionsDistance);
-		Double distance = attractionsDistance.get(4);
-		setAttractionProximityRange(distance);
-		// retrieves the five attractions 
-		for(Attraction attraction : gpsUtil.getAttractions()) {
+		attractionsDistance = getAllAttractionsDistance(visitedLocation);
+		
+		// retrieves the five nearest attractions 
+		Double distance = attractionsDistance.get(gps.getNumberOfAttractions()-1);
+		gps.setAttractionProximityRange(distance);
+		for(Attraction attraction : rewards.getGpsUtil().getAttractions()) {
 			if(isWithinAttractionProximity(attraction, visitedLocation.location)) {
 				nearbyAttractions.add(attraction);
 			}
@@ -123,10 +119,8 @@ public class GpsService {
 	 * 				- the user's location lat/long</br>
 	 * @return a list of Map
 	 */
-	public List<Map<String, Object>> getAllCurrentLocations() {
+	public List<Map<String, Object>> getAllCurrentLocations(List<User> users) {
 		List<Map<String, Object>> allCurrentLocations = new ArrayList<>();
-		List<User> users = new ArrayList<>();
-		users = userService.getAllUsers();
 		for(User user : users) {
 			Map<String, Double> location = new TreeMap<String, Double>();
 			Map<String, Object> currentLocation = new TreeMap<String, Object>();
@@ -141,7 +135,7 @@ public class GpsService {
 	}
 	
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
-		return getDistance(attraction, location) > attractionProximityRange ? false : true;
+		return getDistance(attraction, location) > gps.getAttractionProximityRange() ? false : true;
 	}
 	
 	public double getDistance(Location loc1, Location loc2) {
@@ -157,4 +151,15 @@ public class GpsService {
         double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
         return statuteMiles;
 	}
+	
+	private List<Double> getAllAttractionsDistance(VisitedLocation visitedLocation){
+		List<Double> attractionsDistance = new ArrayList<>();
+		// retrieves a distance list between the user and all attractions
+		for(Attraction attraction : rewards.getGpsUtil().getAttractions()) {
+			attractionsDistance.add(getDistance(attraction, visitedLocation.location));
+		}
+		Collections.sort(attractionsDistance);
+		return attractionsDistance;
+	}
+	
 }

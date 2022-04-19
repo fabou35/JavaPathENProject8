@@ -17,6 +17,7 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import msuser.configuration.TestModeConfiguration;
 import msuser.helper.InternalTestHelper;
+import msrewards.model.Rewards;
 import msrewards.service.RewardsService;
 import msuser.service.UserService;
 import msuser.model.User;
@@ -27,7 +28,8 @@ public class TestRewardsPerformance {
 	@Test
 	public void highVolumeGetRewards() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		Rewards rewards = new Rewards(gpsUtil, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(rewards);
 
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		InternalTestHelper.setInternalUserNumber(100000);

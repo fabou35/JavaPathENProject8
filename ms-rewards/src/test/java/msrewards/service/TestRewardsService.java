@@ -13,7 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import msgps.model.Gps;
 import msgps.service.GpsService;
+import msrewards.model.Rewards;
 import rewardCentral.RewardCentral;
 import msuser.configuration.TestModeConfiguration;
 import msuser.helper.InternalTestHelper;
@@ -28,22 +30,21 @@ public class TestRewardsService {
 	public void userGetRewards() {
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-
+		Rewards rewards = new Rewards(gpsUtil, new RewardCentral());
+		Gps gps = new Gps(gpsUtil, rewards);
+		GpsService gpsService = new GpsService(gps);
 		InternalTestHelper.setInternalUserNumber(0);
-		GpsService gpsService = new GpsService(gpsUtil, rewardsService);
+		
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtil.getAttractions().get(0);
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
 		gpsService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
-		
 		try {
 			TimeUnit.MILLISECONDS.sleep(1000);
 		} catch (InterruptedException e) {
 		}
-		
 		testModeConfiguration.tracker.stopTracking();
 		assertTrue(userRewards.size() > 0);
 	}
@@ -51,9 +52,9 @@ public class TestRewardsService {
 	@Test
 	public void nearAllAttractions() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
-
+		Rewards rewards = new Rewards(gpsUtil, new RewardCentral());
+		rewards.setProximityBuffer(Integer.MAX_VALUE);
+		RewardsService rewardsService = new RewardsService(rewards);
 		InternalTestHelper.setInternalUserNumber(1);
 		TestModeConfiguration testModeConfiguration = new TestModeConfiguration();
 		UserService userService = new UserService(testModeConfiguration);
